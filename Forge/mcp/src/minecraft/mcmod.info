@@ -1,0 +1,17 @@
+[
+{
+  "modid": "arrowsplus",
+  "name": "Arrows Plus",
+  "description": "Hunt for rare trees to use in making super powerful bows and arrows!",
+  "version": "v1.0.0b",
+  "credits": "",
+  "logoFile": "/arrowsplus.png",
+  "mcversion": "1.6.2",
+  "url": "http://www.minecraftforum.net/topic/",
+  "updateUrl": "",
+  "authors": [ "WildBamaBoy", "SheWolfDeadly" ],
+  "dependencies": [
+         "mod_MinecraftForge"
+]
+}
+]
