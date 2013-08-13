@@ -404,7 +404,7 @@ public class EventHooks
 					String RED = "\u00a7C";
 
 					event.entityPlayer.addChatMessage(RED + "You do not have enough experience to cut this tree.");
-					event.entityPlayer.addChatMessage(RED + "Your experience: " + Float.parseFloat(new DecimalFormat("#.##").format(levelCurrent)) + ". Required: " + levelRequired);
+					event.entityPlayer.addChatMessage(RED + "Your experience: " + new DecimalFormat("#.##").format(levelCurrent) + ". Required: " + levelRequired);
 
 					PlayerEvent.BreakSpeed breakSpeedEvent = new PlayerEvent.BreakSpeed(event.entityPlayer, ArrowsPlus.instance.blockArrowTreeLog, meta, 0.01F);
 
