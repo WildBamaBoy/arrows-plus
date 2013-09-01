@@ -7,7 +7,7 @@
  * http://www.gnu.org/licenses/gpl.html
  ******************************************************************************/
 
-package arrowsplus.core.util;
+package arrowsplus.core.util.object;
 
 /**
  * Small object used in determining if experience should be gained or not. Makes things easier.

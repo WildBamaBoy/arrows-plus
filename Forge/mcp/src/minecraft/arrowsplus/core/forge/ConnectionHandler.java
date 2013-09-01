@@ -16,6 +16,7 @@ import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
 import arrowsplus.core.ArrowsPlus;
 import arrowsplus.core.util.PacketHelper;
+import arrowsplus.core.util.object.UpdateHandler;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -27,6 +28,7 @@ public class ConnectionHandler implements IConnectionHandler
 	@Override
 	public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) 
 	{
+		new Thread(new UpdateHandler(netHandler)).run();
 		return;
 	}
 

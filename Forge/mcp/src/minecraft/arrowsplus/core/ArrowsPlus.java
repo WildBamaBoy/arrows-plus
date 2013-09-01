@@ -36,6 +36,7 @@ import net.minecraftforge.common.MinecraftForge;
 import arrowsplus.block.BlockArrowTreeLeaves;
 import arrowsplus.block.BlockArrowTreeLog;
 import arrowsplus.block.BlockSaplingBase;
+import arrowsplus.command.CommandCheckUpdates;
 import arrowsplus.command.CommandDebugMode;
 import arrowsplus.command.CommandShowExperience;
 import arrowsplus.core.forge.CommonProxy;
@@ -45,7 +46,8 @@ import arrowsplus.core.forge.EventHooks;
 import arrowsplus.core.forge.PacketHandler;
 import arrowsplus.core.io.ModPropertiesManager;
 import arrowsplus.core.io.WorldPropertiesManager;
-import arrowsplus.core.util.PlayerInteractEntry;
+import arrowsplus.core.util.object.PlayerInteractEntry;
+import arrowsplus.core.util.object.UpdateHandler;
 import arrowsplus.entity.EntityArrowBase;
 import arrowsplus.gen.WorldGeneratorTrees;
 import arrowsplus.item.ItemArrowBase;
@@ -73,7 +75,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Core of the Arrows Plus mod. Built on core of Minecraft Comes Alive and other systems from it.
  */
-@Mod(modid="arrowsplus", name="Arrows Plus", version="v1.0.0b")
+@Mod(modid="arrowsplus", name="Arrows Plus", version=UpdateHandler.VERSION)
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 channels={"AP_LOGIN", "AP_WORLDPROP", "AP_ADDITEM"}, packetHandler = PacketHandler.class)
 public class ArrowsPlus
@@ -156,6 +158,7 @@ public class ArrowsPlus
 	public boolean hasLoadedProperties = false;
 	public boolean hasEmptiedPropertiesFolder = false;
 	public boolean hasCompletedMainMenuTick   = false;
+	public boolean hasCheckedForUpdates = false;
 	private Logger logger = FMLLog.getLogger();
 	public Random random = new Random();
 	public ModPropertiesManager modPropertiesManager = null;
@@ -176,7 +179,7 @@ public class ArrowsPlus
 	@Instance("arrowsplus")
 	public static ArrowsPlus instance;
 
-	@SidedProxy(clientSide="arrowsplus.ClientProxy", serverSide="arrowsplus.CommonProxy")
+	@SidedProxy(clientSide="arrowsplus.core.forge.ClientProxy", serverSide="arrowsplus.core.forge.CommonProxy")
 	public static CommonProxy proxy;
 
 	//Names to keep up with.
@@ -909,7 +912,8 @@ public class ArrowsPlus
 	{
 		event.registerServerCommand(new CommandDebugMode());
 		event.registerServerCommand(new CommandShowExperience());
-
+		event.registerServerCommand(new CommandCheckUpdates());
+		
 		if (event.getServer() instanceof DedicatedServer)
 		{
 			isDedicatedServer = true;

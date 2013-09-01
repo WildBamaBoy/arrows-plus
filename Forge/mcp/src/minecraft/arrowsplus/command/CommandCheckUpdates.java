@@ -1,5 +1,5 @@
 /*******************************************************************************
- * CommandDebugMode.java
+ * CommandCheckUpdates.java
  * Copyright (c) 2013 WildBamaBoy.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
@@ -9,21 +9,23 @@
 
 package arrowsplus.command;
 
+import arrowsplus.core.ArrowsPlus;
+import arrowsplus.core.util.Color;
+import arrowsplus.core.util.object.UpdateHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatMessageComponent;
-import arrowsplus.core.ArrowsPlus;
 
 /**
  * Defines the debug mode command and what it does.
  */
-public class CommandDebugMode extends CommandBase
+public class CommandCheckUpdates extends CommandBase
 {
 	@Override
 	public String getCommandUsage(ICommandSender sender) 
 	{
-		return "/ap.debug <on/off>";
+		return "/ap.checkupdates <on/off>";
 	}
 
 	@Override
@@ -35,13 +37,13 @@ public class CommandDebugMode extends CommandBase
 	@Override
 	public int getRequiredPermissionLevel() 
 	{
-		return 4;
+		return 0;
 	}
 
 	@Override
 	public String getCommandName() 
 	{
-		return "ap.debug";
+		return "ap.checkupdates";
 	}
 
 	@Override
@@ -51,14 +53,21 @@ public class CommandDebugMode extends CommandBase
 		{
 			if (arguments[0].toLowerCase().equals("on"))
 			{
-				ArrowsPlus.instance.inDebugMode = true;
-				sender.sendChatToPlayer(new ChatMessageComponent().func_111072_b("Arrows Plus debug mode is on."));
+				sender.sendChatToPlayer(new ChatMessageComponent().func_111072_b(Color.GREEN + "Arrows Plus will now automatically check for updates."));
+				ArrowsPlus.instance.hasCheckedForUpdates = false;
+				ArrowsPlus.instance.modPropertiesManager.modProperties.checkForUpdates = true;
+				ArrowsPlus.instance.modPropertiesManager.saveModProperties();
+				
+				new Thread(new UpdateHandler(sender)).run();
 			}
 
 			else
 			{
-				ArrowsPlus.instance.inDebugMode = false;
-				sender.sendChatToPlayer(new ChatMessageComponent().func_111072_b("Arrows Plus debug mode is off."));
+				sender.sendChatToPlayer(new ChatMessageComponent().func_111072_b(Color.RED + "Arrows Plus will no longer report that version " + UpdateHandler.mostRecentVersion + " is available."));				
+				ArrowsPlus.instance.modPropertiesManager.modProperties.checkForUpdates = false;
+				ArrowsPlus.instance.modPropertiesManager.saveModProperties();
+				
+				new Thread(new UpdateHandler(sender)).run();
 			}
 		}
 

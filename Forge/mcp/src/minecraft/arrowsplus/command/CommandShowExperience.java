@@ -26,7 +26,7 @@ public class CommandShowExperience extends CommandBase
 	@Override
 	public String getCommandUsage(ICommandSender sender) 
 	{
-		return "/arrowsplus.showxp";
+		return "/ap.xp";
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class CommandShowExperience extends CommandBase
 	@Override
 	public String getCommandName() 
 	{
-		return "arrowsplus.showxp";
+		return "ap.xp";
 	}
 
 	@Override

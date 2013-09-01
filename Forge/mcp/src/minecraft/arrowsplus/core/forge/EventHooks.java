@@ -30,7 +30,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import arrowsplus.block.BlockSaplingBase;
 import arrowsplus.core.ArrowsPlus;
 import arrowsplus.core.io.WorldPropertiesManager;
-import arrowsplus.core.util.PlayerInteractEntry;
+import arrowsplus.core.util.object.PlayerInteractEntry;
 
 /**
  * Contains methods that perform a function when an event in Minecraft occurs.

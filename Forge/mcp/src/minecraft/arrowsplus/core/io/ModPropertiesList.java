@@ -74,4 +74,8 @@ public class ModPropertiesList implements Serializable
 	
 	public int itemId_IronShard = 1028;
 	public int itemId_Hammer = 1029;
+	
+
+	public boolean checkForUpdates = true;
+	public String lastFoundUpdate = "";
 }
