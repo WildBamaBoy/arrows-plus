@@ -30,6 +30,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ISpecialArmor;
 import arrowsplus.core.ArrowsPlus;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -262,12 +263,6 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 					{
 						damagesource = DamageSource.causeArrowDamage(this, this.shootingEntity);
 					}
-
-					//Sycamore
-					if (this.arrowType == 3)
-					{
-						damagesource = DamageSource.wither;
-					}
 					
 					if (this.isBurning() && !(movingObjPosition.entityHit instanceof EntityEnderman))
 					{
@@ -280,6 +275,12 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						{
 							EntityLivingBase entitylivingbase = (EntityLivingBase)movingObjPosition.entityHit;
 
+							//Sycamore
+							if (this.arrowType == 3)
+							{
+								entitylivingbase.addPotionEffect(new PotionEffect(Potion.wither.id, 7 * 20, 0));
+							}
+							
 							//Gum
 							if (this.arrowType == 4)
 							{
