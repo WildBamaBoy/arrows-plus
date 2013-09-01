@@ -52,7 +52,7 @@ public class BlockArrowTreeLog extends Block
 	public void randomDisplayTick(World world, int x, int y, int z, Random random)
 	{
 		//Makes the Sypherus tree sparkle. The method handles whether it's actually supposed to or not.
-		this.sparkle(world, x, y, z);
+		BlockArrowTreeLog.sparkle(world, x, y, z);
 	}
 
 	@Override
@@ -119,13 +119,13 @@ public class BlockArrowTreeLog extends Block
 	@Override
 	public void registerIcons(IconRegister iconRegister)
 	{
-		this.treeIcons = new Icon[ArrowsPlus.instance.woodNames.length];
-		this.treeIconsTop = new Icon[ArrowsPlus.instance.woodNames.length];
+		this.treeIcons = new Icon[ArrowsPlus.woodNames.length];
+		this.treeIconsTop = new Icon[ArrowsPlus.woodNames.length];
 
 		for (int i = 0; i < this.treeIcons.length; ++i)
 		{
-			this.treeIcons[i] = iconRegister.registerIcon("arrowsplus:tree_" + ArrowsPlus.instance.woodNames[i]);
-			this.treeIconsTop[i] = iconRegister.registerIcon("arrowsplus:tree_" + ArrowsPlus.instance.woodNames[i] + "_top");
+			this.treeIcons[i] = iconRegister.registerIcon("arrowsplus:tree_" + ArrowsPlus.woodNames[i]);
+			this.treeIconsTop[i] = iconRegister.registerIcon("arrowsplus:tree_" + ArrowsPlus.woodNames[i] + "_top");
 		}
 	}
 
@@ -157,7 +157,7 @@ public class BlockArrowTreeLog extends Block
 	 * @param	y		The block's y coordinate.
 	 * @param	z		The block's z coordinate.
 	 */
-	private void sparkle(World world, int x, int y, int z)
+	private static void sparkle(World world, int x, int y, int z)
 	{
 		if (world.getBlockMetadata(x, y, z) == 11)
 		{
@@ -165,41 +165,41 @@ public class BlockArrowTreeLog extends Block
 			
 			for (int pass = 0; pass < 6; ++pass)
 			{
-				double randX = (double)((float)x + random.nextFloat());
-				double randY = (double)((float)y + random.nextFloat());
-				double randZ = (double)((float)z + random.nextFloat());
+				double randX = x + random.nextFloat();
+				double randY = y + random.nextFloat();
+				double randZ = z + random.nextFloat();
 
 				if (pass == 0 && !world.isBlockOpaqueCube(x, y + 1, z))
 				{
-					randY = (double)(y + 1) + 0.0625D;
+					randY = y + 1 + 0.0625D;
 				}
 
 				if (pass == 1 && !world.isBlockOpaqueCube(x, y - 1, z))
 				{
-					randY = (double)(y + 0) - 0.0625D;
+					randY = y + 0 - 0.0625D;
 				}
 
 				if (pass == 2 && !world.isBlockOpaqueCube(x, y, z + 1))
 				{
-					randZ = (double)(z + 1) + 0.0625D;
+					randZ = z + 1 + 0.0625D;
 				}
 
 				if (pass == 3 && !world.isBlockOpaqueCube(x, y, z - 1))
 				{
-					randZ = (double)(z + 0) - 0.0625D;
+					randZ = z + 0 - 0.0625D;
 				}
 
 				if (pass == 4 && !world.isBlockOpaqueCube(x + 1, y, z))
 				{
-					randX = (double)(x + 1) + 0.0625D;
+					randX = x + 1 + 0.0625D;
 				}
 
 				if (pass == 5 && !world.isBlockOpaqueCube(x - 1, y, z))
 				{
-					randX = (double)(x + 0) - 0.0625D;
+					randX = x + 0 - 0.0625D;
 				}
 
-				if (randX < (double)x || randX > (double)(x + 1) || randY < 0.0D || randY > (double)(y + 1) || randZ < (double)z || randZ > (double)(z + 1))
+				if (randX < x || randX > x + 1 || randY < 0.0D || randY > y + 1 || randZ < z || randZ > z + 1)
 				{
 					world.spawnParticle("reddust", randX, randY, randZ, 0.0D, 0.0D, 0.0D);
 				}

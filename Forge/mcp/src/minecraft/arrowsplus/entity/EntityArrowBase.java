@@ -89,13 +89,13 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		this.arrowType = arrowType;
 		this.bowType = bowType;
 		this.inAirTicks = 0;
-		this.windResistance = ArrowsPlus.instance.getArrowWindResistanceByWoodType(arrowType);
+		this.windResistance = ArrowsPlus.getArrowWindResistanceByWoodType(arrowType);
 		this.blocksIgnored = 0;
 
 		//Soft maple "unreliable"
 		if (arrowType == 5)
 		{
-			if (ArrowsPlus.instance.getBooleanWithProbability(15))
+			if (ArrowsPlus.getBooleanWithProbability(15))
 			{
 				world.playSoundAtEntity(entityLiving, "damage.fallbig", 1.0F, 1.0F);
 				setDead();
@@ -127,7 +127,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		{
 			float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
 			this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
-			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f) * 180.0D / Math.PI);
+			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(this.motionY, f) * 180.0D / Math.PI);
 		}
 
 		int tileId = this.worldObj.getBlockId(xTile, yTile, zTile);
@@ -135,9 +135,9 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		if (tileId > 0)
 		{
 			Block.blocksList[tileId].setBlockBoundsBasedOnState(this.worldObj, xTile, yTile, zTile);
-			AxisAlignedBB boundingBox = Block.blocksList[tileId].getCollisionBoundingBoxFromPool(this.worldObj, xTile, yTile, zTile);
+			AxisAlignedBB bb = Block.blocksList[tileId].getCollisionBoundingBoxFromPool(this.worldObj, xTile, yTile, zTile);
 
-			if (boundingBox != null && boundingBox.isVecInside(this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ)))
+			if (bb != null && bb.isVecInside(this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ)))
 			{
 				ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, true, 5);
 				inGround = true;
@@ -168,9 +168,9 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 			else
 			{
 				ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, false, 5);
-				this.motionX *= (double)(this.rand.nextFloat() * 0.2F);
-				this.motionY *= (double)(this.rand.nextFloat() * 0.2F);
-				this.motionZ *= (double)(this.rand.nextFloat() * 0.2F);
+				this.motionX *= this.rand.nextFloat() * 0.2F;
+				this.motionY *= this.rand.nextFloat() * 0.2F;
+				this.motionZ *= this.rand.nextFloat() * 0.2F;
 				ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, new Integer(0), 9);
 				ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, new Integer(0), 10);
 			}
@@ -274,7 +274,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						movingObjPosition.entityHit.setFire(5);
 					}
 
-					if (movingObjPosition.entityHit.attackEntityFrom(damagesource, (float)damage))
+					if (movingObjPosition.entityHit.attackEntityFrom(damagesource, damage))
 					{
 						if (movingObjPosition.entityHit instanceof EntityLivingBase)
 						{
@@ -312,7 +312,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 
 								if (unknown > 0.0F)
 								{
-									movingObjPosition.entityHit.addVelocity(this.motionX * (double)this.getKnockbackStrength() * 0.6000000238418579D / (double)unknown, 0.1D, this.motionZ * (double)this.getKnockbackStrength() * 0.6000000238418579D / (double)unknown);
+									movingObjPosition.entityHit.addVelocity(this.motionX * this.getKnockbackStrength() * 0.6000000238418579D / unknown, 0.1D, this.motionZ * this.getKnockbackStrength() * 0.6000000238418579D / unknown);
 								}
 							}
 
@@ -368,13 +368,13 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, new Integer(this.worldObj.getBlockId(xTile, yTile, zTile)), 3);
 						ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, new Integer(this.worldObj.getBlockMetadata(xTile, yTile, zTile)), 4);
 
-						this.motionX = (double)((float)(movingObjPosition.hitVec.xCoord - this.posX));
-						this.motionY = (double)((float)(movingObjPosition.hitVec.yCoord - this.posY));
-						this.motionZ = (double)((float)(movingObjPosition.hitVec.zCoord - this.posZ));
+						this.motionX = ((float)(movingObjPosition.hitVec.xCoord - this.posX));
+						this.motionY = ((float)(movingObjPosition.hitVec.yCoord - this.posY));
+						this.motionZ = ((float)(movingObjPosition.hitVec.zCoord - this.posZ));
 						damageCalc = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-						this.posX -= this.motionX / (double)damageCalc * 0.05000000074505806D;
-						this.posY -= this.motionY / (double)damageCalc * 0.05000000074505806D;
-						this.posZ -= this.motionZ / (double)damageCalc * 0.05000000074505806D;
+						this.posX -= this.motionX / damageCalc * 0.05000000074505806D;
+						this.posY -= this.motionY / damageCalc * 0.05000000074505806D;
+						this.posZ -= this.motionZ / damageCalc * 0.05000000074505806D;
 						this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 
 						inGround = true;
@@ -395,7 +395,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 			{
 				for (int i = 0; i < 4; ++i)
 				{
-					this.worldObj.spawnParticle("crit", this.posX + this.motionX * (double)i / 4.0D, this.posY + this.motionY * (double)i / 4.0D, this.posZ + this.motionZ * (double)i / 4.0D, -this.motionX, -this.motionY + 0.2D, -this.motionZ);
+					this.worldObj.spawnParticle("crit", this.posX + this.motionX * i / 4.0D, this.posY + this.motionY * i / 4.0D, this.posZ + this.motionZ * i / 4.0D, -this.motionX, -this.motionY + 0.2D, -this.motionZ);
 				}
 			}
 
@@ -430,21 +430,18 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 				for (int j1 = 0; j1 < 4; ++j1)
 				{
 					unknown = 0.25F;
-					this.worldObj.spawnParticle("bubble", this.posX - this.motionX * (double)unknown, this.posY - this.motionY * (double)unknown, this.posZ - this.motionZ * (double)unknown, this.motionX, this.motionY, this.motionZ);
+					this.worldObj.spawnParticle("bubble", this.posX - this.motionX * unknown, this.posY - this.motionY * unknown, this.posZ - this.motionZ * unknown, this.motionX, this.motionY, this.motionZ);
 				}
 
 				motionMultiplier = 0.8F;
 			}
 
-			this.motionX *= (double)motionMultiplier;
-			this.motionY *= (double)motionMultiplier;
-			this.motionZ *= (double)motionMultiplier;
-			this.motionY -= (double)motionYDecrement;
+			this.motionX *= motionMultiplier;
+			this.motionY *= motionMultiplier;
+			this.motionZ *= motionMultiplier;
+			this.motionY -= motionYDecrement;
 			this.setPosition(this.posX, this.posY, this.posZ);
 			this.doBlockCollisions();
-			//
-			//
-			//////////////////////////////////////////////////////////////////////////////
 
 			try
 			{
@@ -475,7 +472,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						case 11: probabilityOfBreaking = 5; break;
 						}
 
-						if (ArrowsPlus.instance.getBooleanWithProbability(probabilityOfBreaking))
+						if (ArrowsPlus.getBooleanWithProbability(probabilityOfBreaking))
 						{
 							setDead();
 						}
@@ -494,7 +491,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						{
 							if (shootingEntity instanceof EntityPlayerMP)
 							{
-								if (ArrowsPlus.instance.getBooleanWithProbability(10))
+								if (ArrowsPlus.getBooleanWithProbability(10))
 								{
 									this.worldObj.playSoundEffect(shootingEntity.posX, shootingEntity.posY, shootingEntity.posZ, "fire.ignite", 1.0F, 1.0F);
 								}
@@ -576,7 +573,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						//Soft maple flying into the wind.
 						if (this.arrowType == 5)
 						{
-							if (!softMapleIsFlyingIntoAir && ArrowsPlus.instance.getBooleanWithProbability(3))
+							if (!softMapleIsFlyingIntoAir && ArrowsPlus.getBooleanWithProbability(3))
 							{
 								this.worldObj.playSoundAtEntity(shootingEntity, "mob.enderdragon.wings", 0.5F, 1.0F);
 								softMapleIsFlyingIntoAir = true;
@@ -658,7 +655,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		{
 			float f = MathHelper.sqrt_double(par1 * par1 + par5 * par5);
 			this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
-			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f) * 180.0D / Math.PI);
+			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, f) * 180.0D / Math.PI);
 			this.prevRotationPitch = this.rotationPitch;
 			this.prevRotationYaw = this.rotationYaw;
 			this.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);

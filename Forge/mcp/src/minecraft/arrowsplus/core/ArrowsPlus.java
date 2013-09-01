@@ -957,7 +957,7 @@ public class ArrowsPlus
 	 * 
 	 * @return	The player entity with the specified username. Null if not on the server.
 	 */
-	public EntityPlayer getPlayerByName(String username)
+	public static EntityPlayer getPlayerByName(String username)
 	{
 		for (WorldServer world : MinecraftServer.getServer().worldServers)
 		{

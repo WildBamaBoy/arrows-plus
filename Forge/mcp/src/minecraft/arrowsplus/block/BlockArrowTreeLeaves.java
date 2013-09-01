@@ -69,11 +69,11 @@ public class BlockArrowTreeLeaves extends BlockLeavesBase
 	@Override
 	public void registerIcons(IconRegister iconRegister)
 	{
-		this.leavesIcons = new Icon[ArrowsPlus.instance.woodNames.length];
+		this.leavesIcons = new Icon[ArrowsPlus.woodNames.length];
 
 		for (int i = 0; i < this.leavesIcons.length; i++)
 		{
-			this.leavesIcons[i] = iconRegister.registerIcon("arrowsPlus:tree_" + ArrowsPlus.instance.woodNames[i] + "_leaves");
+			this.leavesIcons[i] = iconRegister.registerIcon("arrowsPlus:tree_" + ArrowsPlus.woodNames[i] + "_leaves");
 		}
 	}
 
@@ -148,7 +148,7 @@ public class BlockArrowTreeLeaves extends BlockLeavesBase
 	 * @param 	z		Z position of the ticking block.
 	 * @param 	random	Instance of random.
 	 */
-	private void decayLeaves(World world, int x, int y, int z, Random random)
+	private static void decayLeaves(World world, int x, int y, int z, Random random)
 	{
 		int tempX, tempY, tempZ;
 		int blockId, blockMeta;
@@ -193,11 +193,11 @@ public class BlockArrowTreeLeaves extends BlockLeavesBase
 				}
 			}
 
-			this.removeLeaves(world, x, y, z);
+			BlockArrowTreeLeaves.removeLeaves(world, x, y, z);
 		}
 	}
 
-	private void removeLeaves(World world, int x, int y, int z)
+	private static void removeLeaves(World world, int x, int y, int z)
 	{
 		EntityItem entityItem = null;
 
@@ -215,7 +215,7 @@ public class BlockArrowTreeLeaves extends BlockLeavesBase
 		world.setBlock(x, y, z, 0);
 	}
 
-	private Block getSaplingByWoodType(int woodType)
+	private static Block getSaplingByWoodType(int woodType)
 	{
 		switch (woodType)
 		{

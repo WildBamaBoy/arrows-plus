@@ -13,7 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import org.lwjgl.input.Keyboard;
+
 import arrowsplus.core.ArrowsPlus;
+import arrowsplus.core.util.PacketHelper;
 import cpw.mods.fml.common.ICraftingHandler;
 
 /**
@@ -49,6 +53,18 @@ public class CraftingHandler implements ICraftingHandler
 						shardsToMake = stack.stackSize * 4;
 						ironIngotSlot = i;
 					}
+				}
+			}
+			
+			if (player.worldObj.isRemote)
+			{
+				//42 and 54 are both shift keys. If this is skipped, the recipe will only run once.
+				if (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54))
+				{
+					PacketHelper.createAddItemPacket(ArrowsPlus.instance.itemIronShard.itemID, shardsToMake - 8, player.entityId);
+					
+					player.inventory.addItemStackToInventory(new ItemStack(ArrowsPlus.instance.itemIronShard, shardsToMake - 8));
+					craftMatrix.setInventorySlotContents(ironIngotSlot, null);
 				}
 			}
 		}

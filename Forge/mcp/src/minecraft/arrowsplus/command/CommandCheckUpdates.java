@@ -9,13 +9,13 @@
 
 package arrowsplus.command;
 
-import arrowsplus.core.ArrowsPlus;
-import arrowsplus.core.util.Color;
-import arrowsplus.core.util.object.UpdateHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatMessageComponent;
+import arrowsplus.core.ArrowsPlus;
+import arrowsplus.core.util.Color;
+import arrowsplus.core.util.object.UpdateHandler;
 
 /**
  * Defines the debug mode command and what it does.

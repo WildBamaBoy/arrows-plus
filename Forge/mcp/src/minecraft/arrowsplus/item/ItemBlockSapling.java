@@ -35,6 +35,6 @@ public class ItemBlockSapling extends ItemBlock
     public String getUnlocalizedName(ItemStack itemStack)
     {
     	BlockSaplingBase sapling = (BlockSaplingBase) Block.blocksList[itemStack.itemID];
-    	return ArrowsPlus.instance.woodNamesCapitalized[sapling.saplingType] + " Sapling";
+    	return ArrowsPlus.woodNamesCapitalized[sapling.saplingType] + " Sapling";
     }
 }

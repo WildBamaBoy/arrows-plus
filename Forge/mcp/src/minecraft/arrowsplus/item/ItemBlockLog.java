@@ -39,6 +39,6 @@ public class ItemBlockLog extends ItemBlock
 	@Override
 	public String getUnlocalizedName(ItemStack itemStack)
 	{
-		return ArrowsPlus.instance.woodNamesCapitalized[itemStack.getItemDamage()] + " Log";
+		return ArrowsPlus.woodNamesCapitalized[itemStack.getItemDamage()] + " Log";
 	}
 }

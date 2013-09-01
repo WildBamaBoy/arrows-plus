@@ -72,7 +72,7 @@ public class PacketHandler implements IPacketHandler
 	 * @param 	packet	The packet containing the login information.
 	 * @param	player	The player that the packet came from.
 	 */
-	private void handleLogin(Packet250CustomPayload packet, Player senderPlayer) throws IOException, ClassNotFoundException
+	private static void handleLogin(Packet250CustomPayload packet, Player senderPlayer) throws IOException, ClassNotFoundException
 	{
 		byte[] data = ArrowsPlus.decompressBytes(packet.data);
 
@@ -112,7 +112,7 @@ public class PacketHandler implements IPacketHandler
 	 * @param 	packet	The packet containing the world properties information.
 	 * @param	player	The player that the packet came from.
 	 */
-	private void handleWorldProperties(Packet250CustomPayload packet, Player senderPlayer) throws IOException, ClassNotFoundException
+	private static void handleWorldProperties(Packet250CustomPayload packet, Player senderPlayer) throws IOException, ClassNotFoundException
 	{
 		byte[] data = ArrowsPlus.decompressBytes(packet.data);
 
@@ -151,7 +151,7 @@ public class PacketHandler implements IPacketHandler
 	 * @param 	packet	The packet containing the item data.
 	 * @param 	player	The player that the packet came from.
 	 */
-	private void handleAddItem(Packet250CustomPayload packet, Player senderPlayer) throws ClassNotFoundException, IOException 
+	private static void handleAddItem(Packet250CustomPayload packet, Player senderPlayer) throws ClassNotFoundException, IOException 
 	{
 		byte[] data = ArrowsPlus.decompressBytes(packet.data);
 

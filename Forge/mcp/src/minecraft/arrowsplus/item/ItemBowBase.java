@@ -95,8 +95,8 @@ public class ItemBowBase extends Item
 		
 		this.setMaxDamage(durability);
 		this.setCreativeTab(ArrowsPlus.instance.tabArrowsPlus);
-		this.func_111206_d("arrowsplus:bows/bow_" + ArrowsPlus.instance.woodNames[woodType]);
-		this.setUnlocalizedName(ArrowsPlus.instance.woodNamesCapitalized[woodType] + " Bow");
+		this.func_111206_d("arrowsplus:bows/bow_" + ArrowsPlus.woodNames[woodType]);
+		this.setUnlocalizedName(ArrowsPlus.woodNamesCapitalized[woodType] + " Bow");
 	}
 
 	@Override
@@ -238,10 +238,10 @@ public class ItemBowBase extends Item
 
 		if (infiniteFlag || hasValidArrow(entityPlayer))
 		{
-			float velocity = (float)useAmount / 20.0F;
+			float velocity = useAmount / 20.0F;
 			velocity = (velocity * velocity + velocity * 2.0F) / 3.0F;
 
-			if ((double)velocity < 0.1D)
+			if (velocity < 0.1D)
 			{
 				return;
 			}
@@ -256,8 +256,8 @@ public class ItemBowBase extends Item
 			//Velocity calculations. Only if bow fully drawn.
 			if (useAmount >= 18)
 			{
-				velocity += ArrowsPlus.instance.getBowVelocityModifierByWoodType(woodType);
-				velocity += ArrowsPlus.instance.getArrowVelocityModifierByWoodType(itemArrow.woodType);
+				velocity += ArrowsPlus.getBowVelocityModifierByWoodType(woodType);
+				velocity += ArrowsPlus.getArrowVelocityModifierByWoodType(itemArrow.woodType);
 			}
 
 			EntityArrowBase entityArrow = new EntityArrowBase(world, entityPlayer, velocity * 2.0F, itemArrow.woodType, woodType);
@@ -273,7 +273,7 @@ public class ItemBowBase extends Item
 			}
 
 			//Check enchantments
-			if (velocity >= (1.0F + ArrowsPlus.instance.getBowVelocityModifierByWoodType(woodType) + ArrowsPlus.instance.getArrowVelocityModifierByWoodType(itemArrow.woodType)))
+			if (velocity >= (1.0F + ArrowsPlus.getBowVelocityModifierByWoodType(woodType) + ArrowsPlus.getArrowVelocityModifierByWoodType(itemArrow.woodType)))
 			{
 				if (entityArrow.arrowType < 5)
 				{
@@ -285,7 +285,7 @@ public class ItemBowBase extends Item
 
 			if (powerEnchantmentLevel > 0)
 			{
-				entityArrow.setDamage(entityArrow.getDamage() + (double)powerEnchantmentLevel * 0.5D + 0.5D);
+				entityArrow.setDamage(entityArrow.getDamage() + powerEnchantmentLevel * 0.5D + 0.5D);
 			}
 
 			int punchEnchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, itemStack);
@@ -437,7 +437,7 @@ public class ItemBowBase extends Item
 	 * 
 	 * @return	True if an ItemArrowBase is within the provided player's inventory.
 	 */
-	private boolean hasValidArrow(EntityPlayer player)
+	private static boolean hasValidArrow(EntityPlayer player)
 	{
 		for (int i = 0; i < player.inventory.getSizeInventory(); i++)
 		{
@@ -462,7 +462,7 @@ public class ItemBowBase extends Item
 	 * 
 	 * @return	The slot ID of the arrow with the player's selected arrow metadata value.
 	 */
-	private int getSlotOfSelectedArrow(EntityPlayer player)
+	private static int getSlotOfSelectedArrow(EntityPlayer player)
 	{
 		int slot = -1;
 
@@ -478,9 +478,9 @@ public class ItemBowBase extends Item
 				{
 					if (stack.getItem() instanceof ItemArrowBase)
 					{
-						ItemArrowBase arrow = (ItemArrowBase)stack.getItem();
+						ItemArrowBase theArrow = (ItemArrowBase)stack.getItem();
 
-						if (arrow.woodType == manager.worldProperties.selectedArrowMeta)
+						if (theArrow.woodType == manager.worldProperties.selectedArrowMeta)
 						{
 							return i;
 						}
@@ -508,7 +508,7 @@ public class ItemBowBase extends Item
 	 * 
 	 * @return	The slot ID of the arrow with the highest metadata value and therefore best wood type.
 	 */
-	private int getSlotOfHighestMetaArrow(EntityPlayer player)
+	private static int getSlotOfHighestMetaArrow(EntityPlayer player)
 	{
 		int highestMeta = -1;
 		int highestMetaSlot = -1;
@@ -521,11 +521,11 @@ public class ItemBowBase extends Item
 			{
 				if (stack.getItem() instanceof ItemArrowBase)
 				{
-					ItemArrowBase arrow = (ItemArrowBase)stack.getItem();
+					ItemArrowBase theArrow = (ItemArrowBase)stack.getItem();
 
-					if (arrow.woodType >= highestMeta)
+					if (theArrow.woodType >= highestMeta)
 					{
-						highestMeta = arrow.woodType;
+						highestMeta = theArrow.woodType;
 						highestMetaSlot = i;
 					}
 				}
@@ -547,11 +547,11 @@ public class ItemBowBase extends Item
 	private Icon getItemIconForUseDuration(int index, EntityPlayer player)
 	{
 		//Check for the preferred arrow in the player's inventory.
-		ItemArrowBase arrow = null;
+		ItemArrowBase theArrow = null;
 
 		try
 		{
-			arrow = (ItemArrowBase)player.inventory.getStackInSlot(getSlotOfSelectedArrow(player)).getItem();
+			theArrow = (ItemArrowBase)player.inventory.getStackInSlot(getSlotOfSelectedArrow(player)).getItem();
 		}
 
 		//NullPointer or ClassCast is thrown if they don't have an arrow since slot 0 is returned.
@@ -561,12 +561,12 @@ public class ItemBowBase extends Item
 		}
 
 		//We have an arrow.
-		if (arrow != null)
+		if (theArrow != null)
 		{
 			//Determine the arrow's wood type and give the bow the correct icon so that the arrow is shown already in the bow.
-			if (arrow.woodType != 0)
+			if (theArrow.woodType != 0)
 			{
-				return getIconArrayForWoodType(woodType)[1 + index + (arrow.woodType * 3)];
+				return getIconArrayForWoodType(woodType)[1 + index + (theArrow.woodType * 3)];
 			}
 
 			else
@@ -585,13 +585,13 @@ public class ItemBowBase extends Item
 	/**
 	 * Gets the appropriate icon array based on the type of wood this bow is made of.
 	 * 
-	 * @param 	woodType	The type of wood that the bow is made of. (Meta value of log it came from.)
+	 * @param 	iconWoodType	The type of wood that the bow is made of. (Meta value of log it came from.)
 	 * 
 	 * @return	Icon array used to store icons for this bow type.
 	 */
-	private Icon[] getIconArrayForWoodType(int woodType)
+	private Icon[] getIconArrayForWoodType(int iconWoodType)
 	{
-		switch (woodType)
+		switch (iconWoodType)
 		{
 		case 0: return aspenIconArray;
 		case 1: return cottonwoodIconArray;

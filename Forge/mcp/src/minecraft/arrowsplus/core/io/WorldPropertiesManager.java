@@ -169,7 +169,7 @@ public class WorldPropertiesManager implements Serializable
 
 				else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
 				{
-					PacketDispatcher.sendPacketToPlayer(PacketHelper.createWorldPropertiesPacket(this), (Player)ArrowsPlus.instance.getPlayerByName(currentPlayerName));
+					PacketDispatcher.sendPacketToPlayer(PacketHelper.createWorldPropertiesPacket(this), (Player)ArrowsPlus.getPlayerByName(currentPlayerName));
 				}
 			}
 

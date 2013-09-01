@@ -23,7 +23,6 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -112,18 +111,7 @@ public class EventHooks
 			ArrowsPlus.instance.log(e);
 		}
 	}
-
-	/**
-	 * Fires when the player nocks an arrow into a bow.
-	 * 
-	 * @param 	event	An instance of the arrow nock event.
-	 */
-	@ForgeSubscribe
-	public void arrowNockEventHandler(ArrowNockEvent event)
-	{
-		float cameraPitch = event.entityPlayer.cameraPitch;
-	}
-
+	
 	/**
 	 * Fires when the player left or right clicks a block.
 	 * 

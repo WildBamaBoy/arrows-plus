@@ -46,8 +46,8 @@ public class ItemArrowBase extends Item
 		this.damageModifier = damageModifier;
 		this.setCreativeTab(ArrowsPlus.instance.tabArrowsPlus);
 
-		this.func_111206_d("arrowsplus:arrow_" + ArrowsPlus.instance.woodNames[woodType]);
-		this.setUnlocalizedName(ArrowsPlus.instance.woodNamesCapitalized[woodType] + " Arrow");
+		this.func_111206_d("arrowsplus:arrow_" + ArrowsPlus.woodNames[woodType]);
+		this.setUnlocalizedName(ArrowsPlus.woodNamesCapitalized[woodType] + " Arrow");
 	}
 
 	@Override

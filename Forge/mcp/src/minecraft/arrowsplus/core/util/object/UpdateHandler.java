@@ -12,14 +12,13 @@ package arrowsplus.core.util.object;
 import java.net.URL;
 import java.util.Scanner;
 
+import net.minecraft.command.ICommandSender;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.util.ChatMessageComponent;
 import arrowsplus.core.ArrowsPlus;
 import arrowsplus.core.io.ModPropertiesManager;
 import arrowsplus.core.util.Color;
 import arrowsplus.core.util.Format;
-
-import net.minecraft.command.ICommandSender;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.util.ChatMessageComponent;
 
 /**
  * Checks for outdated versions and updates.

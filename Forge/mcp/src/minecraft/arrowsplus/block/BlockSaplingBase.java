@@ -11,7 +11,6 @@ package arrowsplus.block;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
@@ -65,7 +64,7 @@ public class BlockSaplingBase extends BlockFlower
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int metadata)
 	{
-		return this.saplingIcons[saplingType];
+		return BlockSaplingBase.saplingIcons[saplingType];
 	}
 
 	@Override
@@ -78,11 +77,11 @@ public class BlockSaplingBase extends BlockFlower
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister)
 	{
-		this.saplingIcons = new Icon[ArrowsPlus.instance.woodNames.length];
+		BlockSaplingBase.saplingIcons = new Icon[ArrowsPlus.woodNames.length];
 
-		for (int i = 0; i < this.saplingIcons.length; ++i)
+		for (int i = 0; i < BlockSaplingBase.saplingIcons.length; ++i)
 		{
-			this.saplingIcons[i] = iconRegister.registerIcon("arrowsplus:tree_" + ArrowsPlus.instance.woodNames[i] + "_sapling");
+			BlockSaplingBase.saplingIcons[i] = iconRegister.registerIcon("arrowsplus:tree_" + ArrowsPlus.woodNames[i] + "_sapling");
 		}
 	}
 
@@ -126,9 +125,6 @@ public class BlockSaplingBase extends BlockFlower
 		{
 			return;
 		}
-
-		int blockId = world.getBlockId(x, y, z);
-		BlockSaplingBase sapling = (BlockSaplingBase)Block.blocksList[blockId];
 
 		WorldGenArrowTrees worldGenerator = new WorldGenArrowTrees(false, 5, saplingType);
 		world.setBlock(x, y, z, 0, 0, 1);

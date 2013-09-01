@@ -13,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import biomesoplenty.api.Biomes;
-
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
+import biomesoplenty.api.Biomes;
 import cpw.mods.fml.common.IWorldGenerator;
 
 /**
