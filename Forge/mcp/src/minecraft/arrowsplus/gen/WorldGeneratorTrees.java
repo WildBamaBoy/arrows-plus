@@ -34,9 +34,9 @@ public class WorldGeneratorTrees implements IWorldGenerator
 		int coordZ = chunkZ * 16;
 
 		if (biome == BiomeGenBase.forest || biome == BiomeGenBase.forestHills || biome == BiomeGenBase.ocean ||
-			biome == Biomes.forestHillsNew.get() || biome == Biomes.forestNew.get() || biome == Biomes.woodland.get() ||
-			biome == Biomes.mountain.get() || biome == Biomes.meadow.get() || biome == Biomes.shield.get() || biome == Biomes.seasonalForest.get() ||
-			biome == Biomes.deciduousForest.get() || biome == Biomes.borealForest.get()
+			biome == Biomes.forestHillsNew.orNull() || biome == Biomes.forestNew.orNull() || biome == Biomes.woodland.orNull() ||
+			biome == Biomes.mountain.orNull() || biome == Biomes.meadow.orNull() || biome == Biomes.shield.orNull() || biome == Biomes.seasonalForest.orNull() ||
+			biome == Biomes.deciduousForest.orNull() || biome == Biomes.borealForest.orNull()
 			)
 		{
 			for (int i = 0; i < 20; i++)
@@ -67,7 +67,7 @@ public class WorldGeneratorTrees implements IWorldGenerator
 			}
 		}
 
-		else if (biome == Biomes.mapleWoods.get())
+		else if (biome == Biomes.mapleWoods.orNull())
 		{
 			for (int i = 0; i < 20; i++)
 			{
@@ -87,9 +87,9 @@ public class WorldGeneratorTrees implements IWorldGenerator
 			}
 		}
 		
-		else if (biome == BiomeGenBase.swampland || biome == Biomes.bog.get() ||
-				biome == Biomes.swamplandNew.get() || biome == Biomes.deadSwamp.get() ||
-				biome == Biomes.wetland.get() || biome == Biomes.lushSwamp.get() || biome == Biomes.fen.get())
+		else if (biome == BiomeGenBase.swampland || biome == Biomes.bog.orNull() ||
+				biome == Biomes.swamplandNew.orNull() || biome == Biomes.deadSwamp.orNull() ||
+				biome == Biomes.wetland.orNull() || biome == Biomes.lushSwamp.orNull() || biome == Biomes.fen.orNull())
 		{
 			for (int i = 0; i < 20; i++)
 			{
@@ -113,8 +113,8 @@ public class WorldGeneratorTrees implements IWorldGenerator
 		
 		else if (biome == BiomeGenBase.taiga || biome == BiomeGenBase.taigaHills || 
 				 biome == BiomeGenBase.icePlains || biome == BiomeGenBase.iceMountains ||
-				 biome == Biomes.alps.get() || biome == Biomes.alpsBase.get() || 
-				 biome == Biomes.alpsForest.get() || biome == Biomes.frostForest.get()
+				 biome == Biomes.alps.orNull() || biome == Biomes.alpsBase.orNull() || 
+				 biome == Biomes.alpsForest.orNull() || biome == Biomes.frostForest.orNull()
 				 )
 		{
 			for (int i = 0; i < 20; i++)
@@ -134,8 +134,8 @@ public class WorldGeneratorTrees implements IWorldGenerator
 			}
 		}
 
-		else if (biome == BiomeGenBase.jungle || biome == BiomeGenBase.jungleHills || biome == Biomes.jungleNew.get() ||
-				 biome == Biomes.jungleHillsNew.get() || biome == Biomes.rainforest.get())
+		else if (biome == BiomeGenBase.jungle || biome == BiomeGenBase.jungleHills || biome == Biomes.jungleNew.orNull() ||
+				 biome == Biomes.jungleHillsNew.orNull() || biome == Biomes.rainforest.orNull())
 		{
 			if (random.nextBoolean())
 			{
