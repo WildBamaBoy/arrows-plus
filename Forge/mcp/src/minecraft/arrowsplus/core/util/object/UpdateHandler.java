@@ -26,7 +26,7 @@ import arrowsplus.core.util.Format;
 public class UpdateHandler implements Runnable
 {
 	/** The current version of Arrows Plus. */
-	public static final String VERSION = "1.0.1";
+	public static final String VERSION = "1.0.0";
 	
 	/** The update's compatible Minecraft version. */
 	public static String compatibleMinecraftVersion = "";
@@ -92,7 +92,7 @@ public class UpdateHandler implements Runnable
 						
 						netHandler.getPlayer().sendChatToPlayer(new ChatMessageComponent().func_111072_b(
 								Color.YELLOW + 
-								"To turn off notifications about this update, type /arrowsplus.checkupdates off."
+								"To turn off notifications about this update, type /ap.checkupdates off."
 								));
 					}
 
