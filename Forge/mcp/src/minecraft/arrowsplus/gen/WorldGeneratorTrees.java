@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import biomesoplenty.api.Biomes;
+
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -31,7 +33,11 @@ public class WorldGeneratorTrees implements IWorldGenerator
 		int coordX = chunkX * 16; 
 		int coordZ = chunkZ * 16;
 
-		if (biome.biomeID == BiomeGenBase.forest.biomeID || biome.biomeID == BiomeGenBase.forestHills.biomeID || biome.biomeID == BiomeGenBase.ocean.biomeID)
+		if (biome == BiomeGenBase.forest || biome == BiomeGenBase.forestHills || biome == BiomeGenBase.ocean ||
+			biome == Biomes.forestHillsNew.get() || biome == Biomes.forestNew.get() || biome == Biomes.woodland.get() ||
+			biome == Biomes.mountain.get() || biome == Biomes.meadow.get() || biome == Biomes.shield.get() || biome == Biomes.seasonalForest.get() ||
+			biome == Biomes.deciduousForest.get() || biome == Biomes.borealForest.get()
+			)
 		{
 			for (int i = 0; i < 20; i++)
 			{
@@ -53,7 +59,7 @@ public class WorldGeneratorTrees implements IWorldGenerator
 				
 				if (meta == 5 && random.nextBoolean() && random.nextBoolean() && random.nextBoolean())
 				{
-					//Swap soft maple for hard maple.
+					//Swap soft maple for hard maple randomly.
 					meta = 8;
 				}
 				
@@ -61,7 +67,29 @@ public class WorldGeneratorTrees implements IWorldGenerator
 			}
 		}
 
-		else if (biome.biomeID == BiomeGenBase.swampland.biomeID)
+		else if (biome == Biomes.mapleWoods.get())
+		{
+			for (int i = 0; i < 20; i++)
+			{
+				int x2 = coordX + random.nextInt(16);
+				int y2 = random.nextInt(90);
+				int z2 = coordZ + random.nextInt(16);
+
+				int meta = 5;
+				
+				if (random.nextBoolean() && random.nextBoolean() && random.nextBoolean())
+				{
+					//Swap soft maple for hard maple randomly.
+					meta = 8;
+				}
+				
+				new WorldGenArrowTrees(false, 6, meta).generate(world, random, x2, y2, z2);
+			}
+		}
+		
+		else if (biome == BiomeGenBase.swampland || biome == Biomes.bog.get() ||
+				biome == Biomes.swamplandNew.get() || biome == Biomes.deadSwamp.get() ||
+				biome == Biomes.wetland.get() || biome == Biomes.lushSwamp.get() || biome == Biomes.fen.get())
 		{
 			for (int i = 0; i < 20; i++)
 			{
@@ -83,8 +111,11 @@ public class WorldGeneratorTrees implements IWorldGenerator
 			}
 		}
 		
-		else if (biome.biomeID == BiomeGenBase.taiga.biomeID || biome.biomeID == BiomeGenBase.taigaHills.biomeID || 
-				 biome.biomeID == BiomeGenBase.icePlains.biomeID || biome.biomeID == BiomeGenBase.iceMountains.biomeID)
+		else if (biome == BiomeGenBase.taiga || biome == BiomeGenBase.taigaHills || 
+				 biome == BiomeGenBase.icePlains || biome == BiomeGenBase.iceMountains ||
+				 biome == Biomes.alps.get() || biome == Biomes.alpsBase.get() || 
+				 biome == Biomes.alpsForest.get() || biome == Biomes.frostForest.get()
+				 )
 		{
 			for (int i = 0; i < 20; i++)
 			{
@@ -103,7 +134,8 @@ public class WorldGeneratorTrees implements IWorldGenerator
 			}
 		}
 
-		else if (biome.biomeID == BiomeGenBase.jungle.biomeID || biome.biomeID == BiomeGenBase.jungleHills.biomeID)
+		else if (biome == BiomeGenBase.jungle || biome == BiomeGenBase.jungleHills || biome == Biomes.jungleNew.get() ||
+				 biome == Biomes.jungleHillsNew.get() || biome == Biomes.rainforest.get())
 		{
 			if (random.nextBoolean())
 			{
@@ -115,25 +147,6 @@ public class WorldGeneratorTrees implements IWorldGenerator
 
 					new WorldGenArrowTrees(false, 3, 11).generate(world, random, x2, y2, z2);
 				}
-			}
-		}
-		
-		else
-		{
-			for (int i = 0; i < 20; i++)
-			{
-				int x2 = coordX + random.nextInt(16);
-				int y2 = random.nextInt(90);
-				int z2 = coordZ + random.nextInt(16);
-
-				List<Integer>validMetas = new ArrayList<Integer>();
-				validMetas.add(0);
-				validMetas.add(7);
-				validMetas.add(4);
-				validMetas.add(10);
-
-				int meta = validMetas.get(random.nextInt(validMetas.size()));
-				new WorldGenArrowTrees(false, 6, meta).generate(world, random, x2, y2, z2);
 			}
 		}
 	}
