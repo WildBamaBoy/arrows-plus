@@ -81,7 +81,7 @@ public class ItemArrowBase extends Item
 	{
 		switch (woodType)
 		{
-		case 0: informationList.add("25% chance of breaking"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
+		case 0: informationList.add("25% chance of breaking"); informationList.add("Standard"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 1: informationList.add("50% chance of breaking"); informationList.add("Lightweight"); informationList.add("Accurate"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 2: informationList.add("30% chance of breaking"); informationList.add("Standard"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 3: informationList.add("30% chance of breaking"); informationList.add("Wither"); informationList.add("Heavy"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;

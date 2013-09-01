@@ -431,7 +431,7 @@ public class ItemBowBase extends Item
 		case 4: informationList.add("Slow draw"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 5: informationList.add("Standard"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 6: informationList.add("Accurate"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
-		case 7: informationList.add("Slow draw"); informationList.add("Flexible"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
+		case 7: informationList.add("Slow draw"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 8: informationList.add("Very stable"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 9: informationList.add("Very slow draw"); informationList.add("Very strong string"); informationList.add("Unstable"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
 		case 10: informationList.add("Stable"); informationList.add("Accurate"); informationList.add("Sights with Ctrl"); informationList.add(""); informationList.add(Color.BLUE + "+" + damageModifier + " Attack Damage"); break;
