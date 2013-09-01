@@ -92,7 +92,7 @@ public class ItemBowBase extends Item
 		this.stabilityModifier = ArrowsPlus.getBowStabilityModifierByWoodType(woodType);
 		this.isBeingDrawn = false;
 		this.drawnTicks = 0;
-		
+
 		this.setMaxDamage(durability);
 		this.setCreativeTab(ArrowsPlus.instance.tabArrowsPlus);
 		this.func_111206_d("arrowsplus:bows/bow_" + ArrowsPlus.woodNames[woodType]);
@@ -110,24 +110,25 @@ public class ItemBowBase extends Item
 	public void onUpdate(ItemStack itemStack, World world, Entity entity, int unknown, boolean isBeingUsed) 
 	{
 		super.onUpdate(itemStack, world, entity, unknown, isBeingUsed);
-	
+
 		if (world.isRemote)
 		{
+			Minecraft minecraft = Minecraft.getMinecraft();
+
 			if (isBeingUsed)
 			{
 				drawnTicks++;
-				Minecraft minecraft = Minecraft.getMinecraft();
 				EntityRenderer renderer = minecraft.entityRenderer;
-	
+
 				float fovModifierHand = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 33);
 				float smoothCameraFilterX = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 23);
 				float smoothCameraFilterY = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 24);
-	
+
 				if (isBeingDrawn)
 				{
 					minecraft.gameSettings.smoothCamera = true;
 					float modifier = drawnTicks * 0.02F;
-	
+
 					//Zoom in for the mahogany bow if Ctrl is held.
 					if (woodType == 10 && (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)))
 					{
@@ -135,13 +136,13 @@ public class ItemBowBase extends Item
 						{
 							ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, fovModifierHand - modifier, 33);
 						}
-	
+
 						else
 						{
 							ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, fovModifierHand - 0.35F, 33);
 						}
 					}
-	
+
 					//Do camera shake.
 					if (world.rand.nextBoolean())
 					{
@@ -149,35 +150,48 @@ public class ItemBowBase extends Item
 						{
 							smoothCameraFilterX += (3.5F + stabilityModifier);
 						}
-	
+
 						else
 						{
 							smoothCameraFilterY -= (3.5F + stabilityModifier);
 						}
-	
+
 						ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, smoothCameraFilterX, 23);
 					}
-	
+
 					else
 					{
 						if (world.rand.nextBoolean())
 						{
 							smoothCameraFilterY -= (3.5F + stabilityModifier);
 						}
-	
+
 						else
 						{
 							smoothCameraFilterY += (3.5F + stabilityModifier);
 						}
-	
+
 						ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, smoothCameraFilterY, 24);
 					}
 				}
-	
+
 				else
 				{
 					minecraft.gameSettings.smoothCamera = false;
 					drawnTicks = 0;
+					isBeingDrawn = false;
+					isBeingUsed = false;
+				}
+			}
+
+			else
+			{
+				if (isBeingDrawn || drawnTicks != 0)
+				{
+					minecraft.gameSettings.smoothCamera = false;
+					drawnTicks = 0;
+					isBeingDrawn = false;
+					isBeingUsed = false;
 				}
 			}
 		}
@@ -189,21 +203,21 @@ public class ItemBowBase extends Item
 		if (getSlotOfSelectedArrow(entityPlayer) != -1)
 		{
 			isBeingDrawn = true;
-	
+
 			ArrowNockEvent event = new ArrowNockEvent(entityPlayer, itemStack);
 			MinecraftForge.EVENT_BUS.post(event);
-	
+
 			if (event.isCanceled())
 			{
 				return event.result;
 			}
-	
+
 			if (entityPlayer.capabilities.isCreativeMode || hasValidArrow(entityPlayer))
 			{
 				entityPlayer.setItemInUse(itemStack, this.getMaxItemUseDuration(itemStack));
 			}
 		}
-	
+
 		return itemStack;
 	}
 
@@ -212,12 +226,12 @@ public class ItemBowBase extends Item
 	{
 		isBeingDrawn = false;
 		int useAmount = ((this.getMaxItemUseDuration(itemStack) - inUseCount) - slowdownModifier);
-		
+
 		if (slowdownModifier < 0)
 		{
 			useAmount += slowdownModifier;
 		}
-		
+
 		//Prevent from firing if negative. Sometimes the event doesn't cancel it, allowing for rapid fire.
 		if (useAmount <= 0)
 		{
