@@ -12,6 +12,7 @@ package arrowsplus.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,7 +31,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ISpecialArmor;
 import arrowsplus.core.ArrowsPlus;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -123,7 +123,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		boolean inGround = ObfuscationReflectionHelper.getPrivateValue(EntityArrow.class, this, 5);
 		int ticksInGround = ObfuscationReflectionHelper.getPrivateValue(EntityArrow.class, this, 9);
 		int ticksInAir = ObfuscationReflectionHelper.getPrivateValue(EntityArrow.class, this, 10);
-
+		
 		if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
 		{
 			float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);

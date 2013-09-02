@@ -22,6 +22,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraft.util.MouseFilter;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
@@ -123,10 +124,32 @@ public class ItemBowBase extends Item
 				float fovModifierHand = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 33);
 				float smoothCameraFilterX = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 23);
 				float smoothCameraFilterY = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 24);
-
+				
 				if (isBeingDrawn)
 				{
-					minecraft.gameSettings.smoothCamera = true;
+					//Do camera shake.
+					float archerFactor = ArrowsPlus.instance.playerWorldManagerMap.get(minecraft.thePlayer.username).worldProperties.archerFactor;
+					float shakeModify = ((3.5F + stabilityModifier) - archerFactor);
+					
+					if (shakeModify < 0.0F)
+					{
+						shakeModify = 0.0F;
+					}
+					
+					if (shakeModify > 0.1F)
+					{
+						minecraft.gameSettings.smoothCamera = true;
+						
+						float testSensitivity = ArrowsPlus.instance.initialMouseSensitivity + (archerFactor / 4);
+						
+						if (testSensitivity > 0.8F)
+						{
+							testSensitivity = 0.8F;
+						}
+						
+						minecraft.gameSettings.mouseSensitivity = testSensitivity;
+					}
+					
 					float modifier = drawnTicks * 0.02F;
 
 					//Zoom in for the mahogany bow if Ctrl is held.
@@ -143,41 +166,47 @@ public class ItemBowBase extends Item
 						}
 					}
 
-					//Do camera shake.
 					if (world.rand.nextBoolean())
 					{
-						if (world.rand.nextBoolean())
+						if (shakeModify > 0.0F)
 						{
-							smoothCameraFilterX += (3.5F + stabilityModifier);
-						}
+							if (world.rand.nextBoolean())
+							{
+								smoothCameraFilterX += shakeModify;
+							}
 
-						else
-						{
-							smoothCameraFilterY -= (3.5F + stabilityModifier);
-						}
+							else
+							{
+								smoothCameraFilterX -= shakeModify;
+							}
 
-						ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, smoothCameraFilterX, 23);
+							ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, smoothCameraFilterX, 23);
+						}
 					}
 
 					else
 					{
-						if (world.rand.nextBoolean())
+						if (shakeModify > 0.0F)
 						{
-							smoothCameraFilterY -= (3.5F + stabilityModifier);
-						}
+							if (world.rand.nextBoolean())
+							{
+								smoothCameraFilterY -= shakeModify;
+							}
 
-						else
-						{
-							smoothCameraFilterY += (3.5F + stabilityModifier);
-						}
+							else
+							{
+								smoothCameraFilterY += shakeModify;
+							}
 
-						ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, smoothCameraFilterY, 24);
+							ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, smoothCameraFilterY, 24);
+						}
 					}
 				}
 
 				else
 				{
 					minecraft.gameSettings.smoothCamera = false;
+					minecraft.gameSettings.mouseSensitivity = ArrowsPlus.instance.initialMouseSensitivity;
 					drawnTicks = 0;
 					isBeingDrawn = false;
 					isBeingUsed = false;
@@ -189,6 +218,7 @@ public class ItemBowBase extends Item
 				if (isBeingDrawn || drawnTicks != 0)
 				{
 					minecraft.gameSettings.smoothCamera = false;
+					minecraft.gameSettings.mouseSensitivity = ArrowsPlus.instance.initialMouseSensitivity;
 					drawnTicks = 0;
 					isBeingDrawn = false;
 					isBeingUsed = false;
@@ -337,6 +367,27 @@ public class ItemBowBase extends Item
 			if (!world.isRemote)
 			{
 				world.spawnEntityInWorld(entityArrow);
+
+				WorldPropertiesManager manager = ArrowsPlus.instance.playerWorldManagerMap.get(entityPlayer.username);
+				manager.worldProperties.archerFactor += 0.006;
+				manager.saveWorldProperties();
+			}
+			
+			else
+			{
+				EntityRenderer renderer = Minecraft.getMinecraft().entityRenderer;
+
+				MouseFilter mouseFilterXAxis = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 9);
+				MouseFilter mouseFilterYAxis = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, 10);
+				
+				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterXAxis, 0.0F, 0);
+				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterXAxis, 0.0F, 1);
+				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterXAxis, 0.0F, 2);
+				
+				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterYAxis, 0.0F, 0);
+				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterYAxis, 0.0F, 1);
+				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterYAxis, 0.0F, 2);
+				System.out.println("SET");
 			}
 		}
 	}

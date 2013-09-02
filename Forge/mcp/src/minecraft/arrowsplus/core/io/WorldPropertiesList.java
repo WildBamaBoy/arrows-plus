@@ -20,4 +20,5 @@ public class WorldPropertiesList implements Serializable
 	public int playerID = 0;
 	public int selectedArrowMeta = -1;
 	public float stat_WoodcuttingExperience = 0.0F;
+	public float archerFactor = 0.0F;
 }

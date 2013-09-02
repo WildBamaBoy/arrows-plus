@@ -23,6 +23,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -154,6 +155,7 @@ public class ArrowsPlus
 
 	//Fields for core functions.
 	public String runningDirectory = "";
+	public float initialMouseSensitivity = 0.0F;
 	public boolean inDebugMode = false;
 	public boolean hasLoadedProperties = false;
 	public boolean hasEmptiedPropertiesFolder = false;
@@ -476,6 +478,9 @@ public class ArrowsPlus
 		if (event.getSide() == Side.CLIENT)
 		{
 			runningDirectory = System.getProperty("user.dir");
+			
+			//Also initial mouse sensitivity.
+			initialMouseSensitivity = Minecraft.getMinecraft().gameSettings.mouseSensitivity;
 		}
 
 		else if (event.getSide() == Side.SERVER)
