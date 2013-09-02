@@ -62,7 +62,7 @@ def main():
     modArchive = zipfile.ZipFile(buildFolder + "/Arrows Plus " + releaseVersion + ".zip", "w", zipfile.ZIP_DEFLATED)
     modFiles = os.listdir(buildFolder)
 
-    modArchive.write(projectFolder + "src/minecraft/arrowsplus.png", "mca.png")
+    modArchive.write(projectFolder + "src/minecraft/arrowsplus.png", "arrowsplus.png")
     modArchive.write(projectFolder + "src/minecraft/mcmod.info", "mcmod.info")
     modArchive.write(baseFolder + "LICENSE", "_LICENSE.txt")
 
@@ -70,6 +70,7 @@ def main():
     for root, dirs, files in os.walk(assetsFolder):
         for fileName in files:
             fullPath = os.path.join(root, fileName)
+            modArchive.write(fullPath, fullPath.replace(assetsFolder, "assets/"))
 
     print "Zipping compiled classes..."
     for root, dirs, files in os.walk(reobfFolder):
