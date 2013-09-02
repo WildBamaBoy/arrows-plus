@@ -9,8 +9,12 @@
 
 package arrowsplus.core;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -33,6 +37,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import arrowsplus.block.BlockArrowTreeLeaves;
 import arrowsplus.block.BlockArrowTreeLog;
@@ -78,7 +83,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 @Mod(modid="arrowsplus", name="Arrows Plus", version=UpdateHandler.VERSION)
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
-channels={"AP_LOGIN", "AP_WORLDPROP", "AP_ADDITEM"}, packetHandler = PacketHandler.class)
+channels={"AP_LOGIN", "AP_WORLDPROP", "AP_ADDITEM", "AP_ACHIEV"}, packetHandler = PacketHandler.class)
 public class ArrowsPlus
 {
 	//Creative Tab
@@ -152,6 +157,14 @@ public class ArrowsPlus
 	public Achievement achievementHarvestHickory;
 	public Achievement achievementHarvestMahogany;
 	public Achievement achievementHarvestSypherus;
+	public Achievement achievementPoisonPlayer;
+	public Achievement achievementBlindPlayer;
+	public Achievement achievementWitherPlayer;
+	public Achievement achievementZoomIn;
+	public Achievement achievementTeleport;
+	public Achievement achievementReachMaxProficiency;
+
+	public AchievementPage achievementPageArrowsPlus;
 
 	//Fields for core functions.
 	public String runningDirectory = "";
@@ -189,7 +202,7 @@ public class ArrowsPlus
 		"ash", "beech", "hardmaple", "hickory", "mahogany", "sypherus"};
 
 	public static final String[] woodNamesCapitalized = new String[] {"Aspen", "Cottonwood", "Alder", "Sycamore", "Gum", "Soft Maple",
-	"Ash", "Beech", "Hard Maple", "Hickory", "Mahogany", "Sypherus"};
+		"Ash", "Beech", "Hard Maple", "Hickory", "Mahogany", "Sypherus"};
 
 	/**
 	 * Gets a random boolean with a probability of being true.
@@ -201,12 +214,12 @@ public class ArrowsPlus
 	public static boolean getBooleanWithProbability(int probabilityOfTrue)
 	{
 		int randomNumber = ArrowsPlus.instance.random.nextInt(100) + 1;
-	
+
 		if (randomNumber <= probabilityOfTrue)
 		{
 			return true;
 		}
-	
+
 		else
 		{
 			return false;
@@ -367,22 +380,22 @@ public class ArrowsPlus
 			Deflater deflater = new Deflater();
 			deflater.setLevel(Deflater.BEST_COMPRESSION);
 			deflater.setInput(input);
-	
+
 			ByteArrayOutputStream byteOutput = new ByteArrayOutputStream(input.length);
 			deflater.finish();
-	
+
 			byte[] buffer = new byte[1024];
-	
+
 			while(!deflater.finished())
 			{
 				int count = deflater.deflate(buffer);
 				byteOutput.write(buffer, 0, count);
 			}
-	
+
 			byteOutput.close();
 			return byteOutput.toByteArray();
 		}
-	
+
 		catch (Throwable e)
 		{
 			ArrowsPlus.instance.quitWithError("Error compressing byte array.", e);
@@ -403,21 +416,21 @@ public class ArrowsPlus
 		{
 			Inflater inflater = new Inflater();
 			inflater.setInput(input);
-	
+
 			ByteArrayOutputStream byteOutput = new ByteArrayOutputStream(input.length);
-	
+
 			byte[] buffer = new byte[1024];
-	
+
 			while(!inflater.finished())
 			{
 				int count = inflater.inflate(buffer);
 				byteOutput.write(buffer, 0, count);
 			}
-	
+
 			byteOutput.close();
 			return byteOutput.toByteArray();
 		}
-	
+
 		catch (Throwable e)
 		{
 			ArrowsPlus.instance.quitWithError("Error decompressing byte array.", e);
@@ -438,28 +451,81 @@ public class ArrowsPlus
 			{
 				file.delete();
 			}
-	
+
 			else
 			{
 				String files[] = file.list();
-	
+
 				for (String temp : files)
 				{
 					File fileDelete = new File(file, temp);
 					deletePath(fileDelete);
 				}
-	
+
 				if (file.list().length == 0)
 				{
 					file.delete();
 				}
 			}
 		}
-	
+
 		else
 		{
 			file.delete();
 		}
+	}
+
+	/**
+	 * Reads Minecraft's options file and retrieves the language ID from it.
+	 * 
+	 * @return	Returns the language ID last loaded by Minecraft.
+	 */
+	public static String getLanguageIDFromOptions()
+	{
+		BufferedReader reader = null;
+
+		try 
+		{
+			reader = new BufferedReader(new FileReader(ArrowsPlus.instance.runningDirectory + "/options.txt"));
+
+			String line = "";
+
+			while (line != null)
+			{
+				line = reader.readLine();
+
+				if (line.contains("lang:"))
+				{
+					break;
+				}
+			}
+
+			if (!line.isEmpty())
+			{
+				reader.close();
+				return line.substring(5);
+			}
+		} 
+
+		catch (FileNotFoundException e) 
+		{
+			ArrowsPlus.instance.log("Could not find options.txt file. Defaulting to English.");
+			return "en_US";
+		} 
+
+		catch (IOException e)
+		{
+			ArrowsPlus.instance.quitWithError("Error reading from Minecraft options.txt file.", e);
+			return null;
+		}
+
+		catch (NullPointerException e)
+		{
+			ArrowsPlus.instance.log("NullPointerException while trying to read options.txt. Defaulting to English.");
+			return "en_US";
+		}
+
+		return null;
 	}
 
 	/**
@@ -473,12 +539,12 @@ public class ArrowsPlus
 	{
 		//Set instance.
 		instance = this;
-		
+
 		//Set running directory.
 		if (event.getSide() == Side.CLIENT)
 		{
 			runningDirectory = System.getProperty("user.dir");
-			
+
 			//Also initial mouse sensitivity.
 			initialMouseSensitivity = Minecraft.getMinecraft().gameSettings.mouseSensitivity;
 		}
@@ -500,7 +566,7 @@ public class ArrowsPlus
 		GameRegistry.registerCraftingHandler(new CraftingHandler());
 
 		//Create creative tab.
-		tabArrowsPlus = new CreativeTabs("tabArrowsPlus") 
+		tabArrowsPlus = new CreativeTabs("tabArrowsPlus")
 		{
 			public ItemStack getIconItemStack() 
 			{
@@ -655,10 +721,11 @@ public class ArrowsPlus
 
 		//Misc. items
 		itemIronShard = new Item(modPropertiesManager.modProperties.itemId_IronShard).func_111206_d("arrowsPlus:shard_iron").setUnlocalizedName("Iron Shard").setCreativeTab(tabArrowsPlus);
-		itemHammer = new Item(modPropertiesManager.modProperties.itemId_Hammer).func_111206_d("arrowsPlus:hammer").setUnlocalizedName("Hammer").setCreativeTab(tabArrowsPlus).setMaxStackSize(1);
+		//itemHammer = new Item(modPropertiesManager.modProperties.itemId_Hammer).func_111206_d("arrowsPlus:hammer").setUnlocalizedName("Hammer").setCreativeTab(tabArrowsPlus).setMaxStackSize(1);
+		//itemHammer.setContainerItem(itemHammer);
 
 		LanguageRegistry.addName(itemIronShard, "Iron Shard");
-		LanguageRegistry.addName(itemHammer, "Hammer");
+		//LanguageRegistry.addName(itemHammer, "Hammer");
 
 		//Register recipes.
 		GameRegistry.addShapelessRecipe(new ItemStack(itemStickAspen, 8), new ItemStack(blockArrowTreeLog, 1, 0));
@@ -673,12 +740,13 @@ public class ArrowsPlus
 		GameRegistry.addShapelessRecipe(new ItemStack(itemStickHickory, 8), new ItemStack(blockArrowTreeLog, 1, 9));
 		GameRegistry.addShapelessRecipe(new ItemStack(itemStickMahogany, 8), new ItemStack(blockArrowTreeLog, 1, 10));
 		GameRegistry.addShapelessRecipe(new ItemStack(itemStickSypherus, 8), new ItemStack(blockArrowTreeLog, 1, 11));
-		GameRegistry.addShapelessRecipe(new ItemStack(itemIronShard, 4), new ItemStack(Item.ingotIron, 1), new ItemStack(itemHammer));
+		//GameRegistry.addShapelessRecipe(new ItemStack(itemIronShard, 4), new ItemStack(Item.ingotIron, 1), new ItemStack(itemHammer));
+		GameRegistry.addShapelessRecipe(new ItemStack(itemIronShard, 4), new ItemStack(Item.ingotIron, 1));
 
-		GameRegistry.addRecipe(new ItemStack(itemHammer, 1), new Object[]
-				{
-			"IIS", "  S", "  S", 'I', Item.ingotIron, 'S', Item.stick
-				});
+		//		GameRegistry.addRecipe(new ItemStack(itemHammer, 1), new Object[]
+		//				{
+		//			"IIS", "  S", "  S", 'I', Item.ingotIron, 'S', Item.stick
+		//				});
 
 		GameRegistry.addRecipe(new ItemStack(itemBowAspen), new Object[]
 				{
@@ -804,10 +872,86 @@ public class ArrowsPlus
 		EntityRegistry.registerModEntity(EntityArrowBase.class, EntityArrowBase.class.getSimpleName(), 7, this, 200, 2, true);
 
 		//Create achievements
-		//TODO
+		achievementHarvestAspen 	= new Achievement(2454, "AP_HarvestAspen"		, 0, 13, blockSaplingAspen, null).registerAchievement();
+		achievementHarvestCottonwood = new Achievement(2455, "AP_HarvestCottonwood"	, 0, 12, blockSaplingCottonwood, achievementHarvestAspen).registerAchievement();
+		achievementHarvestAlder 	= new Achievement(2456, "AP_HarvestAlder"		, 0, 11, blockSaplingAlder, achievementHarvestCottonwood).registerAchievement();
+		achievementHarvestSycamore 	= new Achievement(2457, "AP_HarvestSycamore"	, 0, 10, blockSaplingSycamore, achievementHarvestAlder).registerAchievement();
+		achievementHarvestGum 		= new Achievement(2458, "AP_HarvestGum"			, 0, 9, blockSaplingGum, achievementHarvestSycamore).registerAchievement();
+		achievementHarvestSoftMaple = new Achievement(2459, "AP_HarvestSoftMaple"	, -1, 9, blockSaplingSoftMaple, achievementHarvestSycamore).registerAchievement();
+		achievementHarvestAsh 		= new Achievement(2460, "AP_HarvestAsh"			, 0, 8, blockSaplingAsh, achievementHarvestGum).registerAchievement();
+		achievementHarvestBeech 	= new Achievement(2461, "AP_HarvestBeech"		, 0, 7, blockSaplingBeech, achievementHarvestAsh).registerAchievement();
+		achievementHarvestHardMaple = new Achievement(2462, "AP_HarvestHardMaple"	, 1, 9, blockSaplingHardMaple, achievementHarvestSycamore).registerAchievement();
+		achievementHarvestHickory 	= new Achievement(2463, "AP_HarvestHickory"		, 0, 6, blockSaplingHickory, achievementHarvestBeech).registerAchievement();
+		achievementHarvestMahogany 	= new Achievement(2464, "AP_HarvestMahogany"	, 0, 5, blockSaplingMahogany, achievementHarvestHickory).registerAchievement();
+		achievementHarvestSypherus 	= new Achievement(2465, "AP_HarvestSypherus"	, 0, 4, blockSaplingSypherus, achievementHarvestMahogany).registerAchievement();
+		achievementWitherPlayer 	= new Achievement(2466, "AP_WitherPlayer"		, 2, 10, itemArrowSycamore, achievementHarvestMahogany).registerAchievement();
+		achievementBlindPlayer 		= new Achievement(2467, "AP_BlindPlayer"		, -2, 8, itemArrowAsh, achievementHarvestMahogany).registerAchievement();
+		achievementPoisonPlayer 	= new Achievement(2468, "AP_PoisonPlayer"		, -2, 7, itemArrowBeech, achievementHarvestMahogany).registerAchievement();
+		achievementZoomIn 			= new Achievement(2470, "AP_ZoomIn"				, 2, 5, itemBowMahogany, achievementHarvestMahogany).registerAchievement();
+		achievementTeleport 		= new Achievement(2471, "AP_Teleport"			, -2, 4, itemBowSypherus, achievementHarvestSypherus).registerAchievement();
+		achievementReachMaxProficiency = new Achievement(2472, "AP_ReachMaxProficiency"	, 0, 2, Item.diamond, null).registerAchievement().setSpecial();
 
 		//Register achievement page.
-		//TODO
+		achievementPageArrowsPlus = new AchievementPage("Arrows Plus",
+				achievementHarvestAspen,
+				achievementHarvestCottonwood,
+				achievementHarvestAlder,
+				achievementHarvestSycamore,
+				achievementHarvestGum,
+				achievementHarvestSoftMaple,
+				achievementHarvestAsh,
+				achievementHarvestBeech,
+				achievementHarvestHardMaple,
+				achievementHarvestHickory,
+				achievementHarvestMahogany,
+				achievementHarvestSypherus,
+				achievementWitherPlayer,
+				achievementBlindPlayer,
+				achievementPoisonPlayer,
+				achievementZoomIn,
+				achievementTeleport,
+				achievementReachMaxProficiency
+				);
+		AchievementPage.registerAchievementPage(achievementPageArrowsPlus);
+
+		String languageID = getLanguageIDFromOptions();
+
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestAspen", languageID, "Harvest Aspen");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestAspen.desc", languageID, "Harvest an Aspen log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestCottonwood", languageID, "Harvest Cottonwood");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestCottonwood.desc", languageID, "Harvest a Cottonwood log.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestAlder", languageID, "Harvest Alder");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestAlder.desc", languageID, "Harvest an Alder log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestSycamore", languageID, "Harvest Sycamore");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestSycamore.desc", languageID, "Harvest a Sycamore log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestGum", languageID, "Harvest Gum");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestGum.desc", languageID, "Harvest a Gum log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestSoftMaple", languageID, "Harvest Soft Maple");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestSoftMaple.desc", languageID, "Harvest a Soft Maple log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestAsh", languageID, "Harvest Ash");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestAsh.desc", languageID, "Harvest an Ash log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestBeech", languageID, "Harvest Beech");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestBeech.desc", languageID, "Harvest a Beech log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestHardMaple", languageID, "Harvest Hard Maple");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestHardMaple.desc", languageID, "Harvest a Hard Maple log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestHickory", languageID, "Harvest Hickory");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestHickory.desc", languageID, "Harvest a Hickory log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestMahogany", languageID, "Harvest Mahogany");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestMahogany.desc", languageID, "Harvest a Mahogany log."); 
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestSypherus", languageID, "Harvest Sypherus");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_HarvestSypherus.desc", languageID, "Harvest a Sypherus log.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_WitherPlayer", languageID, "Pretty Scary");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_WitherPlayer.desc", languageID, "Use a Sycamore arrow to wither a player.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_BlindPlayer", languageID, "An Eye for an Eye");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_BlindPlayer.desc", languageID, "Blind a player with the Ash arrow.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_PoisonPlayer", languageID, "Cyanide & Happiness");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_PoisonPlayer.desc", languageID, "Poison a player with the Beech arrow.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_ZoomIn", languageID, "I See You!");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_ZoomIn.desc", languageID, "Zoom in with the Mahogany bow.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_Teleport", languageID, "Instant Transmission");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_Teleport.desc", languageID, "Teleport with the Sypherus bow.");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_ReachMaxProficiency", languageID, "Master Archer");
+		LanguageRegistry.instance().addStringLocalization("achievement." + "AP_ReachMaxProficiency.desc", languageID, "Reach maximum proficiency with bows.");
 	}
 
 	/**
@@ -918,7 +1062,7 @@ public class ArrowsPlus
 		event.registerServerCommand(new CommandDebugMode());
 		event.registerServerCommand(new CommandShowExperience());
 		event.registerServerCommand(new CommandCheckUpdates());
-		
+
 		if (event.getServer() instanceof DedicatedServer)
 		{
 			isDedicatedServer = true;

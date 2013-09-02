@@ -268,6 +268,24 @@ public class EventHooks
 					//Now check if it was an arrow tree.
 					else if (previousBlockID == ArrowsPlus.instance.blockArrowTreeLog.blockID)
 					{
+						ArrowsPlus.instance.log("A");
+						
+						switch (meta)
+						{
+						case 0: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestAspen); break;
+						case 1: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestCottonwood); break;
+						case 2: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestAlder); break;
+						case 3: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestSycamore); break;
+						case 4: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestGum); break;
+						case 5: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestSoftMaple); break;
+						case 6: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestAsh); break;
+						case 7: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestBeech); break;
+						case 8: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestHardMaple); break;
+						case 9: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestHickory); break;
+						case 10: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestMahogany); break;
+						case 11: player.triggerAchievement(ArrowsPlus.instance.achievementHarvestSypherus); break;
+						}
+						
 						//Debug mode gives 1 point of experience. Arrow trees give more experience based on level (meta).
 						if (!ArrowsPlus.instance.inDebugMode)
 						{
@@ -277,7 +295,7 @@ public class EventHooks
 
 						else
 						{
-							manager.worldProperties.stat_WoodcuttingExperience += 1.0F;
+							manager.worldProperties.stat_WoodcuttingExperience += 10.0F;
 							manager.saveWorldProperties();
 						}
 					}

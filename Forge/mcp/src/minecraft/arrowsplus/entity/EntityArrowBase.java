@@ -12,7 +12,6 @@ package arrowsplus.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -46,22 +45,22 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 {
 	/** The arrow type/damage/metadata value of the arrow fired. */
 	public int arrowType;
-	
+
 	/** The bow type/damage/metadata value of the bow that fired this arrow. */
 	public int bowType;
-	
+
 	/** How many blocks the arrow has ignored. For Hickory arrow. */
 	public int blocksIgnored;	
-	
+
 	/** How many ticks the arrow has been in the air. */
 	public int inAirTicks;
-	
+
 	/** The arrow's wind resistance value. Subtracted from 0.10. */
 	public double windResistance;
-	
+
 	/** Is the bow stuck in the ground? */
 	public boolean isInGround;
-	
+
 	public int softMapleCaughtByWindTicks;
 	public boolean softMapleIsFlyingIntoAir;
 
@@ -111,7 +110,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 	public void onUpdate()
 	{
 		this.onEntityUpdate();
-		
+
 		//Representation of EntityArrow onUpdate() code.
 		//
 		//
@@ -123,7 +122,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		boolean inGround = ObfuscationReflectionHelper.getPrivateValue(EntityArrow.class, this, 5);
 		int ticksInGround = ObfuscationReflectionHelper.getPrivateValue(EntityArrow.class, this, 9);
 		int ticksInAir = ObfuscationReflectionHelper.getPrivateValue(EntityArrow.class, this, 10);
-		
+
 		if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
 		{
 			float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -243,10 +242,12 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 				{
 					damageCalc = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
 					int damage = MathHelper.ceiling_double_int(getDamage());
-
+					boolean hasArmor = false;
+					EntityPlayer player = (EntityPlayer)this.shootingEntity;
+					
 					//Account for block penetration
 					damage -= blocksIgnored;
-							
+
 					if (this.getIsCritical())
 					{
 						damage += this.rand.nextInt(damage / 2 + 2);
@@ -258,17 +259,30 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 					{
 						damagesource = DamageSource.causeArrowDamage(this, this);
 					}
-					
+
 					else
 					{
 						damagesource = DamageSource.causeArrowDamage(this, this.shootingEntity);
 					}
-					
+
 					if (this.isBurning() && !(movingObjPosition.entityHit instanceof EntityEnderman))
 					{
 						movingObjPosition.entityHit.setFire(5);
 					}
 
+					if (this.arrowType == 7)
+					{
+						for (ItemStack stack : player.inventory.armorInventory)
+						{
+							if (stack != null)
+							{
+								hasArmor = true;
+								damage = 0;
+								break;
+							}
+						}
+					}
+						
 					if (movingObjPosition.entityHit.attackEntityFrom(damagesource, damage))
 					{
 						if (movingObjPosition.entityHit instanceof EntityLivingBase)
@@ -278,30 +292,48 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 							//Sycamore
 							if (this.arrowType == 3)
 							{
+								if (entitylivingbase instanceof EntityPlayer)
+								{
+									player.triggerAchievement(ArrowsPlus.instance.achievementWitherPlayer);
+								}
+
 								entitylivingbase.addPotionEffect(new PotionEffect(Potion.wither.id, 7 * 20, 0));
 							}
-							
+
 							//Gum
 							if (this.arrowType == 4)
 							{
 								entitylivingbase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 7 * 20, 0));
 							}
-							
+
 							//Ash
 							if (this.arrowType == 6)
-							{
+							{	
 								if (worldObj.rand.nextBoolean() && worldObj.rand.nextBoolean() && worldObj.rand.nextBoolean())
 								{
 									entitylivingbase.addPotionEffect(new PotionEffect(Potion.blindness.id, 7 * 20, 0));
+
+									if (entitylivingbase instanceof EntityPlayer)
+									{
+										player.triggerAchievement(ArrowsPlus.instance.achievementBlindPlayer);
+									}
 								}
 							}
-							
+
 							//Beech
 							if (this.arrowType == 7)
 							{
-								entitylivingbase.addPotionEffect(new PotionEffect(Potion.poison.id, 7 * 20, 0));
+								if (!hasArmor)
+								{
+									if (entitylivingbase instanceof EntityPlayer)
+									{
+										player.triggerAchievement(ArrowsPlus.instance.achievementPoisonPlayer);
+									}
+
+									entitylivingbase.addPotionEffect(new PotionEffect(Potion.poison.id, 7 * 20, 0));
+								}
 							}
-							
+
 							if (!this.worldObj.isRemote)
 							{
 								entitylivingbase.setArrowCountInEntity(entitylivingbase.getArrowCountInEntity() + 1);
@@ -335,7 +367,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 							this.setDead();
 						}
 					}
-					
+
 					else
 					{
 						this.motionX *= -0.10000000149011612D;
@@ -346,7 +378,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 						ObfuscationReflectionHelper.setPrivateValue(EntityArrow.class, this, new Integer(0), 10);
 					}
 				}
-				
+
 				else
 				{
 					//Allow for hard maple block penetration.
@@ -502,6 +534,8 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 									EntityPlayerMP entityPlayerMP = (EntityPlayerMP)shootingEntity;
 									entityPlayerMP.playerNetServerHandler.setPlayerLocation(posX, posY, posZ, entityPlayerMP.rotationYaw, entityPlayerMP.rotationPitch);
 									this.worldObj.playSoundEffect(posX, posY, posZ, "mob.endermen.portal", 1.0F, 1.0F);
+									
+									entityPlayerMP.triggerAchievement(ArrowsPlus.instance.achievementTeleport);
 								}
 							}
 						}
@@ -612,12 +646,12 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		if (!this.worldObj.isRemote && this.isInGround && this.arrowShake <= 0)
 		{
 			boolean flag = this.canBePickedUp == 1 || this.canBePickedUp == 2 && par1EntityPlayer.capabilities.isCreativeMode;
-	
+
 			if (this.canBePickedUp == 1 && !par1EntityPlayer.inventory.addItemStackToInventory(new ItemStack(getItemArrowByArrowType(), 1)))
 			{
 				flag = false;
 			}
-	
+
 			if (flag)
 			{
 				this.playSound("random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
@@ -651,7 +685,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		this.motionX = par1;
 		this.motionY = par3;
 		this.motionZ = par5;
-	
+
 		if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
 		{
 			float f = MathHelper.sqrt_double(par1 * par1 + par5 * par5);
@@ -672,7 +706,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 		{
 			return 1;
 		}
-		
+
 		else
 		{
 			return 0;

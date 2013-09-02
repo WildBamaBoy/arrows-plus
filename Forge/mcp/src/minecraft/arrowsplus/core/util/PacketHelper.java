@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.stats.Achievement;
 import arrowsplus.core.ArrowsPlus;
 import arrowsplus.core.io.ModPropertiesManager;
 import arrowsplus.core.io.WorldPropertiesManager;
@@ -110,6 +111,41 @@ public final class PacketHelper
 			ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);
 			objectOutput.writeObject(itemId);
 			objectOutput.writeObject(stackSize);
+			objectOutput.writeObject(playerId);
+			objectOutput.close();
+
+			thePacket.data = ArrowsPlus.compressBytes(byteOutput.toByteArray());
+			thePacket.length = thePacket.data.length;
+
+			ArrowsPlus.instance.logDebug("Sent packet: " + thePacket.channel);
+			return thePacket;
+		}
+
+		catch (Throwable e)
+		{
+			ArrowsPlus.instance.log(e);
+			return null;
+		}
+	}
+	
+	/**
+	 * Creates packet used to unlock an achievement for a player.
+	 * 
+	 * @param 	achievement				The achievement to unlock.
+	 * @param 	playerId				The id of the player to unlock the achievement on. 
+	 * 
+	 * @return	An achievement packet.
+	 */
+	public static Packet createAchievementPacket(Achievement achievement, int playerId) 
+	{
+		try
+		{
+			Packet250CustomPayload thePacket = new Packet250CustomPayload();
+			thePacket.channel = "AP_ACHIEV";
+
+			ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
+			ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);
+			objectOutput.writeObject(achievement.statId);
 			objectOutput.writeObject(playerId);
 			objectOutput.close();
 

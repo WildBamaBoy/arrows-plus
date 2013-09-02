@@ -18,6 +18,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.AchievementList;
 import net.minecraft.world.World;
 import arrowsplus.core.ArrowsPlus;
 import arrowsplus.core.io.ModPropertiesManager;
@@ -52,6 +54,11 @@ public class PacketHandler implements IPacketHandler
 			else if (packet.channel.equals("AP_ADDITEM"))
 			{
 				handleAddItem(packet, senderPlayer);
+			}
+			
+			else if (packet.channel.equals("AP_ACHIEV"))
+			{
+				handleAchievement(packet, senderPlayer);
 			}
 			
 			else
@@ -165,5 +172,37 @@ public class PacketHandler implements IPacketHandler
 
 		EntityPlayer player = (EntityPlayer)senderPlayer;
 		player.inventory.addItemStackToInventory(new ItemStack(itemId, stackSize, 0));
+	}
+	
+	/**
+	 * Handles a packet that unlocks an achievement for a player.
+	 * 
+	 * @param 	packet	The packet containing the achievement and player data.
+	 * @param 	player	The player that the packet came from.
+	 */
+	@SuppressWarnings("javadoc")
+	private static void handleAchievement(Packet250CustomPayload packet, Player player) throws ClassNotFoundException, IOException
+	{
+		byte[] data = ArrowsPlus.decompressBytes(packet.data);
+
+		ByteArrayInputStream byteInput = new ByteArrayInputStream(data);
+		ObjectInputStream objectInput = new ObjectInputStream(byteInput);
+
+		//Assign received data.
+		int achievementID = (Integer)objectInput.readObject();
+		int playerID = (Integer)objectInput.readObject();
+
+		EntityPlayer entityPlayer = (EntityPlayer)player;
+
+		for (Object obj : AchievementList.achievementList)
+		{
+			Achievement achievement = (Achievement)obj;
+
+			if (achievement.statId == achievementID)
+			{
+				entityPlayer.triggerAchievement(achievement);
+				break;
+			}
+		}
 	}
 }

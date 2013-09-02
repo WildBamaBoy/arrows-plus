@@ -33,8 +33,10 @@ import org.lwjgl.input.Keyboard;
 import arrowsplus.core.ArrowsPlus;
 import arrowsplus.core.io.WorldPropertiesManager;
 import arrowsplus.core.util.Color;
+import arrowsplus.core.util.PacketHelper;
 import arrowsplus.entity.EntityArrowBase;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -157,6 +159,8 @@ public class ItemBowBase extends Item
 					{
 						if (modifier <= 0.35F)
 						{
+							minecraft.thePlayer.triggerAchievement(ArrowsPlus.instance.achievementZoomIn);
+							PacketDispatcher.sendPacketToServer(PacketHelper.createAchievementPacket(ArrowsPlus.instance.achievementZoomIn, minecraft.thePlayer.entityId));
 							ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, renderer, fovModifierHand - modifier, 33);
 						}
 
@@ -371,6 +375,11 @@ public class ItemBowBase extends Item
 				WorldPropertiesManager manager = ArrowsPlus.instance.playerWorldManagerMap.get(entityPlayer.username);
 				manager.worldProperties.archerFactor += 0.006;
 				manager.saveWorldProperties();
+				
+				if (manager.worldProperties.archerFactor >= 3.5F)
+				{
+					entityPlayer.triggerAchievement(ArrowsPlus.instance.achievementReachMaxProficiency);
+				}
 			}
 			
 			else
