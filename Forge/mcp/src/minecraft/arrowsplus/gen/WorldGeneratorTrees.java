@@ -35,7 +35,7 @@ public class WorldGeneratorTrees implements IWorldGenerator
 		if (biome == BiomeGenBase.forest || biome == BiomeGenBase.forestHills || biome == BiomeGenBase.ocean ||
 			biome == Biomes.forestHillsNew.orNull() || biome == Biomes.forestNew.orNull() || biome == Biomes.woodland.orNull() ||
 			biome == Biomes.mountain.orNull() || biome == Biomes.meadow.orNull() || biome == Biomes.shield.orNull() || biome == Biomes.seasonalForest.orNull() ||
-			biome == Biomes.deciduousForest.orNull() || biome == Biomes.borealForest.orNull()
+			biome == Biomes.deciduousForest.orNull() || biome == Biomes.borealForest.orNull() || biome == Biomes.orchard.orNull()
 			)
 		{
 			for (int i = 0; i < 20; i++)
