@@ -387,7 +387,6 @@ public class ItemBowBase extends Item
 				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterYAxis, 0.0F, 0);
 				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterYAxis, 0.0F, 1);
 				ObfuscationReflectionHelper.setPrivateValue(MouseFilter.class, mouseFilterYAxis, 0.0F, 2);
-				System.out.println("SET");
 			}
 		}
 	}
