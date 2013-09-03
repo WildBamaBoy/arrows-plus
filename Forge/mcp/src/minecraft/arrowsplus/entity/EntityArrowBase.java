@@ -244,7 +244,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 					int damage = MathHelper.ceiling_double_int(getDamage());
 					boolean hasArmor = false;
 					EntityPlayer player = (EntityPlayer)this.shootingEntity;
-					
+
 					//Account for block penetration
 					damage -= blocksIgnored;
 
@@ -272,17 +272,20 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 
 					if (this.arrowType == 7)
 					{
-						for (ItemStack stack : player.inventory.armorInventory)
+						if (player != null)
 						{
-							if (stack != null)
+							for (ItemStack stack : player.inventory.armorInventory)
 							{
-								hasArmor = true;
-								damage = 0;
-								break;
+								if (stack != null)
+								{
+									hasArmor = true;
+									damage = 0;
+									break;
+								}
 							}
 						}
 					}
-						
+
 					if (movingObjPosition.entityHit.attackEntityFrom(damagesource, damage))
 					{
 						if (movingObjPosition.entityHit instanceof EntityLivingBase)
@@ -534,7 +537,7 @@ public class EntityArrowBase extends EntityArrow implements IEntityAdditionalSpa
 									EntityPlayerMP entityPlayerMP = (EntityPlayerMP)shootingEntity;
 									entityPlayerMP.playerNetServerHandler.setPlayerLocation(posX, posY, posZ, entityPlayerMP.rotationYaw, entityPlayerMP.rotationPitch);
 									this.worldObj.playSoundEffect(posX, posY, posZ, "mob.endermen.portal", 1.0F, 1.0F);
-									
+
 									entityPlayerMP.triggerAchievement(ArrowsPlus.instance.achievementTeleport);
 								}
 							}
